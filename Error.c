@@ -22,7 +22,6 @@ void PrimeInt() {
 		if (a % x == 0)
 		{
 			i++;
-			x++;
 		}
 		else 
 		{
