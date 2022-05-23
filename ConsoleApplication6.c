@@ -1,107 +1,204 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
-#define SIZE 30 // Не знаю почему но работает только черезе define иначе не даёт использовать константу SIZE при объявлении массива
+#define SIZE 10
+#define SZ 1000
+#define T int
+#define true 1==1
+#define false 1!=1
 #include <stdio.h>
 #include <locale.h>
 #include <math.h>
 #include <malloc.h>
 
-void swap(int* a, int* b)
-{
-	int t = *a;
-	*a = *b;
-	*b = t;
-}
+typedef int boolean;
 
-void initArr(int* Arr, int length)
-{
-	for (int i = 0; i < length; i++)
+
+
+int cursor = -1;
+T Stack[SZ];
+
+boolean push(T data) {
+	if (cursor < SZ)
 	{
-		Arr[i] = rand() % 100;
-	}
-}
-
-void print(int* Arr, int length)
-{
-	for (int i = 0; i < length; i++)
-	{
-			printf(" %i", Arr[i]);
-	}
-}
-
-void Median(int* Arr)
-
-{
-	for (int i = 0; i < 3 - 1; i++)
-	{
-		for (int j = 0; j < 3-1; j++)
-		{
-			if (Arr[j] > Arr[j+1])
-			{
-				swap(&Arr[j], &Arr[j+1]);
-			}
-		}
-	}
-}
-
-void qSort(int* Arr, int first, int last)
-{
-	
-	int i = first;
-	int j = last;
-	
-
-	if (last <= 10)
-	{
-		int temp, pos;
-
-		for (int i = 1; i < last; i++)
-		{
-			temp = Arr[i];
-			pos = i - 1;
-
-			while (pos >= 0 && Arr[pos] > temp)
-			{
-				Arr[pos + 1] = Arr[pos];
-				pos--;
-			}
-			Arr[pos + 1] = temp;
-		}
+		Stack[++cursor] = data;
+		return true;
 	}
 	else
 	{
-		int ArrT[3] = { Arr[first], Arr[last], Arr[(first + last) / 2] };
-		Median(ArrT);
-		int x = ArrT[1];
-		do
-		{
-			while (Arr[i] < x) i++;
-			while (Arr[j] > x) j--;
+		printf("%s", "Stack overflow");
+		return false;
+	}
+}
 
-			if (i <= j)
-			{
-				swap(&Arr[i], &Arr[j]);
-				i++;
-				j--;
-			}
+T pop() {
+	if (cursor != -1)
+	{
+		return Stack[cursor--];
+	}
+	else {
+		printf("%s", "Stack is empty");
+		return -1;
+	}
+}
 
+int DecimalToBinary(int a) {
 
-		} while (i <= j);
-		if (i < last) qSort(Arr, i, last);
-		if (j > first) qSort(Arr, first, j);
+	while (a > 0)
+	{
+		push(a % 2);
+		a = a / 2;
 	}
 
-	
+	while (cursor != -1)
+	{
+		printf("%i", pop());
+	}
 
+}
+////////////////////////////////////////////////////////////////////////
+
+typedef struct {
+	int pr;
+	int dat;
+} Node;
+
+Node* Arr[SIZE];
+int head;
+int tail;
+int items;
+
+void init()
+{
+	for (int i = 0; i < SIZE; i++)
+	{
+		Arr[i] = NULL;
+	}
+	
+	head = 0;
+	tail = 0;
+	items = 0;
+}
+
+void ins(int pr, int dat) {
+
+	Node* node = (Node*) malloc(sizeof(Node));
+	node->dat = dat;
+	node->pr = pr;
+	int flag;
+
+	if (items == 0)
+	{
+		Arr[tail++] = node;
+		items++;
+	}
+	else if (items == SIZE)
+	{
+		printf("%s \n", "Queue is full");
+		return;
+	}
+	else
+	{
+		int i = items;
+		int idx = 0;
+		Node* tmp;
+		
+		while (Arr[i] != NULL)
+		{
+			i++;
+		}
+		
+		Arr[i] = node;
+		tail++;
+		items++;
+	}
 		
 }
 
+Node* rem() {
+
+	
+
+	if (items == 0)
+	{
+		return NULL;
+	}
+	else {
+		int idx = Arr[head]->pr;
+		int t;
+
+		for (int i = 0; i < items; i++)
+		{
+			if (Arr[i + 1] == NULL || Arr[i] == NULL)
+			{
+				i++;
+				continue;
+			}
+
+			if (idx < Arr[i+1]->pr)
+			{
+				idx = Arr[i+1]->pr;
+				t = i+1;
+			}
+
+			
+		}
+
+		while (Arr[tail] == NULL && Arr[tail] != Arr[head])
+		{
+			tail--;
+		}
+
+		Node* tmp = Arr[t];
+
+		Arr[t] = Arr[tail];
+		Arr[tail] = tmp;
+
+		Arr[tail] = NULL;
+
+		tail--;
+		items--;
+		return tmp;
+	}
+
+}
+
+void printQ() {
+	printf("[ ");
+	for (int i = 0; i < SIZE; i++)
+	{
+		if (Arr[i] == NULL)
+		{
+			printf("[*, *]");
+		}
+		else
+		{
+			printf("[%d, %d] ", Arr[i]->pr, Arr[i]->dat);
+		}
+	}
+	printf(" ]\n");
+}
 
 int main()
 {
-	int Arr[SIZE];
-	initArr(Arr, SIZE);
-	print(Arr, SIZE);
-	qSort(Arr, 0, SIZE - 1);
-	printf("\n");
-	print(Arr, 30);
+	init();
+	ins(1, 11);
+	ins(3, 22);
+	ins(4, 31);
+	ins(2, 44);
+	ins(5, 111);
+	ins(8, 112);
+	ins(19, 211);
+	ins(6, 115);
+	ins(9, 121);
+	ins(2, 160);
+	printQ();
+	rem();
+	rem();
+	rem();
+	rem();
+	printQ();
+
+	DecimalToBinary(10);
+
+	
+
 }
