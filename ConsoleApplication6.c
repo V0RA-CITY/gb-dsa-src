@@ -1,7 +1,7 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #define SIZE 10
 #define SZ 1000
-#define T int
+#define T char
 #define true 1==1
 #define false 1!=1
 #include <stdio.h>
@@ -10,6 +10,20 @@
 #include <malloc.h>
 
 typedef int boolean;
+
+typedef struct Node
+{
+	int dat;
+	struct Node *next;
+
+} Node;
+
+typedef struct
+{
+	Node *head;
+	int size;
+
+}list;
 
 
 
@@ -40,165 +54,199 @@ T pop() {
 	}
 }
 
-int DecimalToBinary(int a) {
-
-	while (a > 0)
-	{
-		push(a % 2);
-		a = a / 2;
-	}
-
-	while (cursor != -1)
-	{
-		printf("%i", pop());
-	}
-
-}
-////////////////////////////////////////////////////////////////////////
-
-typedef struct {
-	int pr;
-	int dat;
-} Node;
-
-Node* Arr[SIZE];
-int head;
-int tail;
-int items;
-
-void init()
+boolean sequence()
 {
-	for (int i = 0; i < SIZE; i++)
+	int prev;
+	char str[SZ];
+	printf("Write sequence :");
+	scanf("%s", &str);
+
+	for (int i = 0; i < SZ; i++)
 	{
-		Arr[i] = NULL;
+		if (str[i] == '(' || str[i] == '[' || str[i] == '{')
+		{
+			push(str[i]);
+		}
+
+		if (str[i] == ')' || str[i] == ']' || str[i] == '}')
+		{
+			if (cursor == -1)
+			{
+				return false;
+			}
+
+			for (int j = 0; j <= cursor; j++)
+			{
+				if ((int)Stack[j] == (int)(str[i] - 1) || (int)Stack[j] == (int)(str[i] - 2))
+				{
+					pop();
+					continue;
+				}
+			}
+		}
 	}
-	
-	head = 0;
-	tail = 0;
-	items = 0;
+
+	if (cursor == -1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
-void ins(int pr, int dat) {
+void initList (list* lst)
+{
+	lst->head = NULL;
+	lst->size = 0;
+}
 
-	Node* node = (Node*) malloc(sizeof(Node));
-	node->dat = dat;
-	node->pr = pr;
-	int flag;
+void ListPush(list* lst, int value)
+{
+	Node* new = (Node*)malloc(sizeof(Node));
+	new->dat = value;
+	new->next = NULL;
 
-	if (items == 0)
+	Node* current = lst->head;
+
+	if (current == NULL)
 	{
-		Arr[tail++] = node;
-		items++;
-	}
-	else if (items == SIZE)
-	{
-		printf("%s \n", "Queue is full");
+		lst->head = new;
+		lst->size++;
 		return;
 	}
 	else
 	{
-		int i = items;
-		int idx = 0;
-		Node* tmp;
-		
-		while (Arr[i] != NULL)
+		while (current->next != NULL)
 		{
-			i++;
+			current = current->next;
 		}
-		
-		Arr[i] = node;
-		tail++;
-		items++;
+		current->next = new;
+		lst->size++;
 	}
-		
 }
 
-Node* rem() {
+Node* ListPop(list* lst)
+{
+	Node* current = lst->head;
 
-	
-
-	if (items == 0)
+	if (current == NULL)
 	{
-		return NULL;
+		printf("List is empty");
 	}
-	else {
-		int idx = Arr[head]->pr;
-		int t;
+	else
+	{
+		lst->head = current->next;
+		lst->size--;
+		return current;
+	}
+}
 
-		for (int i = 0; i < items; i++)
+void NodePrint(Node* n)
+{
+	if (n == NULL)
+	{
+		printf("[]");
+	}
+	else
+	{
+		printf("[%i]", n->dat);
+	}
+}
+
+void ListPrint(list* lst)
+{
+	Node* current = lst->head;
+	if (current == NULL)
+	{
+		printf("List is empty");
+	}
+	else
+	{
+		while (current != NULL)
 		{
-			if (Arr[i + 1] == NULL || Arr[i] == NULL)
-			{
-				i++;
-				continue;
-			}
-
-			if (idx < Arr[i+1]->pr)
-			{
-				idx = Arr[i+1]->pr;
-				t = i+1;
-			}
-
+			NodePrint(current);
+			current = current->next;
 			
 		}
-
-		while (Arr[tail] == NULL && Arr[tail] != Arr[head])
-		{
-			tail--;
-		}
-
-		Node* tmp = Arr[t];
-
-		Arr[t] = Arr[tail];
-		Arr[tail] = tmp;
-
-		Arr[tail] = NULL;
-
-		tail--;
-		items--;
-		return tmp;
 	}
-
 }
 
-void printQ() {
-	printf("[ ");
-	for (int i = 0; i < SIZE; i++)
+list* ListCopy(list* lst)
+{
+	Node* current1 = lst->head;
+	list* lstCopy = (list*)malloc(sizeof(list));
+	initList(lstCopy);
+
+	if (current1 == NULL)
 	{
-		if (Arr[i] == NULL)
+		printf("Nothing to copy");
+	}
+	else
+	{
+		while (current1 != NULL)
 		{
-			printf("[*, *]");
-		}
-		else
-		{
-			printf("[%d, %d] ", Arr[i]->pr, Arr[i]->dat);
+			ListPush(lstCopy, current1->dat);
+			current1 = current1->next;
 		}
 	}
-	printf(" ]\n");
+	
+	return lstCopy;
+}
+
+boolean SortDetect(list* lst)
+{
+	Node* current = lst->head;
+	int counter = 0;
+	int counter2 = 0;
+	if (current == NULL)
+	{
+		printf("%s", "List is empty");
+	}
+	else
+	{
+		while (current->next != NULL)
+		{
+			if (current->dat < current->next->dat)
+			{
+				counter++;
+			}
+			else if (current->dat > current->next->dat)
+			{
+				counter2++;
+			}
+			current = current->next;
+		}
+	}
+
+	if (counter == (lst->size - 1) || counter2 == (lst->size - 1))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+	
 }
 
 int main()
 {
-	init();
-	ins(1, 11);
-	ins(3, 22);
-	ins(4, 31);
-	ins(2, 44);
-	ins(5, 111);
-	ins(8, 112);
-	ins(19, 211);
-	ins(6, 115);
-	ins(9, 121);
-	ins(2, 160);
-	printQ();
-	rem();
-	rem();
-	rem();
-	rem();
-	printQ();
-
-	DecimalToBinary(10);
-
+	list* lst = (list*)malloc(sizeof(list));
+	printf("%i", sequence());
 	
-
+	printf("\n");
+	initList(lst);
+	ListPush(lst, 30);
+	ListPush(lst, 20);
+	ListPush(lst, 10);
+	ListPrint(lst);
+	printf("\n");
+	ListPrint(ListCopy(lst));
+	printf("\n");
+	ListPrint(lst);
+	printf("\n");
+	printf("%i", SortDetect(lst));
 }
