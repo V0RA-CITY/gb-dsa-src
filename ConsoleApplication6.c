@@ -11,169 +11,62 @@
 #include <malloc.h>
 #include <stdlib.h>
 
-typedef int boolean;
 
-int cursor = -1;
-boolean Visited[n] = {0};
 
-boolean push(T data) {
-	if (cursor < SZ)
-	{
-		Visited[++cursor] = data;
-		return true;
-	}
-	else
-	{
-		printf("%s", "Stack overflow");
-		return false;
-	}
-}
-
-T pop() {
-	if (cursor != -1)
-	{
-		return Visited[cursor--];
-	}
-	else {
-		printf("%s", "Stack is empty");
-		return -1;
-	}
-}
-
-typedef struct {
-	int pr;
-	int dat;
-} Node;
-
-Node* Arr[SIZE];
-int head;
-int tail;
-int items;
-
-void init()
+int hashF (char data[SZ])
 {
-	for (int i = 0; i < SIZE; i++)
+	int tmp = 0;
+
+	for (int i = 0; i < SZ; i++)
 	{
-		Arr[i] = NULL;
+		tmp += (int)data[i];
 	}
 
-	head = 0;
-	tail = 0;
-	items = 0;
+	return tmp;
 }
 
-void ins(int pr, int dat) {
-
-	Node* node = (Node*)malloc(sizeof(Node));
-	node->dat = dat;
-	node->pr = pr;
-	int flag;
-
-	if (items == 0)
-	{
-		Arr[tail++] = node;
-		items++;
-	}
-	else if (items == SIZE)
-	{
-		printf("%s \n", "Queue is full");
-		return;
-	}
-	else
-	{
-		int i = items;
-		int idx = 0;
-		Node* tmp;
-
-		while (Arr[i] != NULL)
-		{
-			i++;
-		}
-
-		Arr[i] = node;
-		tail++;
-		items++;
-	}
-
-}
-
-Node* rem() {
-
-
-
-	if (items == 0)
-	{
-		return NULL;
-	}
-	else {
-		int idx = Arr[head]->pr;
-		int t;
-
-		for (int i = 0; i < items; i++)
-		{
-			if (Arr[i + 1] == NULL || Arr[i] == NULL)
-			{
-				i++;
-				continue;
-			}
-
-			if (idx < Arr[i + 1]->pr)
-			{
-				idx = Arr[i + 1]->pr;
-				t = i + 1;
-			}
-
-
-		}
-
-		while (Arr[tail] == NULL && Arr[tail] != Arr[head])
-		{
-			tail--;
-		}
-
-		Node* tmp = Arr[t];
-
-		Arr[t] = Arr[tail];
-		Arr[tail] = tmp;
-
-		Arr[tail] = NULL;
-
-		tail--;
-		items--;
-		return tmp;
-	}
-
-}
-
-
-int matrix[n][n] = {
-	{0,1,1,0,0,0},
-	{0,0,0,1,1,1},
-	{0,0,0,0,0,1},
-	{1,0,0,0,0,0},
-	{0,0,0,0,0,0},
-	{0,0,0,0,1,0},
-};
-
-void depthTravers(int st)
+void sumAlgo()
 {
-	int r;
-	printf("%d ", st);
-	init();
-	push(true);
+	int result = 0;
+	int a = 50;
+	int b = 10;
+	int c = 5;
+	int d = 2;
+	int e = 1;
 	
-	for ( r = 0; r <= n; r++)
+	while (result != 98)
 	{
-		if (matrix[st][r] == 1 && !Visited[r])
+		
+
+		if (result + a > 98)
 		{
-			depthTravers(r);
+			result += b;
+		}
+		else
+		{
+			result += a;
+		}
+		if (result + b > 98)
+		{
+			result += c;
+		}
+		if (result + c > 98)
+		{
+			result += d;
+		}
+		if (result + d > 98)
+		{
+			result += e;
 		}
 	}
-
+	printf("%i", result);
 }
 
 void main()
 {
-	depthTravers(0);
-	
+	char str[SZ] = {0};
+	printf("%s", "Enter string :");
+	scanf("%s", &str);
+	hashF(str);
+	sumAlgo();
 }
