@@ -1,72 +1,147 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #define true 1==1
 #define false 1!=1
-#define n 6
 #define SZ 1000
-#define SIZE 10
-#define T int
+#define size 27
 #include <stdio.h>
 #include <locale.h>
 #include <math.h>
 #include <malloc.h>
 #include <stdlib.h>
 
+char Alphabet[size] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' '};
 
-
-int hashF (char data[SZ])
+int FindPosition(char value)
 {
-	int tmp = 0;
+	int i = 0;
 
-	for (int i = 0; i < SZ; i++)
+	while (Alphabet[i] != value)
 	{
-		tmp += (int)data[i];
+		i++;
 	}
 
-	return tmp;
+	return i;
 }
 
-void sumAlgo()
+void CaesarCipher(char str[SZ], int key)
 {
-	int result = 0;
-	int a = 50;
-	int b = 10;
-	int c = 5;
-	int d = 2;
-	int e = 1;
-	
-	while (result != 98)
-	{
+	 int i = 0;
+	 while (str[i] != 0)
+	 {
+		 if (FindPosition(str[i]) + key >= size - 1)
+		 {
+			 str[i] = Alphabet[FindPosition(str[i])];
+		 }
+		 else
+		 {
+			 str[i] = Alphabet[FindPosition(str[i]) + key];
+		 }
+		 
+		 i++;
+	 }
 		
+	 printf("%s", str);
+}
 
-		if (result + a > 98)
+void CaesarDecipher(char str[SZ], int key)
+ {
+	 int i = 0;
+	 while (str[i] != 0)
+	 {
+		 if (FindPosition(str[i]) + key >= size - 1)
+		 {
+			 str[i] = Alphabet[FindPosition(str[i])];
+		 }
+		 else
+		 {
+			 str[i] = Alphabet[FindPosition(str[i]) - key];
+		 }
+		 
+		 i++;
+	 }
+
+	 printf("%s", str);
+ }
+
+void Cipher(char str[SZ], char arr[SZ][SZ], int key)
+ {
+	int counter = 0;
+	for (int i = 0; i < key; i++)
+	{
+		for (int j = 0; j < key; j++)
 		{
-			result += b;
+			arr[i][j] = str[counter];
+			counter++;
 		}
-		else
+		
+	}
+
+		for (int g = 0; g < key; g++)
 		{
-			result += a;
+			char tmp = arr[0][g];
+			arr[0][g] = arr[0 + 1][g];
+			arr[0 + 1][g] = tmp;
 		}
-		if (result + b > 98)
+
+		if (key >= 4)
 		{
-			result += c;
+			for (int g = 0; g < key; g++)
+			{
+				char tmp = arr[2 + 1][g];
+				arr[2 + 1][g] = arr[2][g];
+				arr[2][g] = tmp;
+			}
 		}
-		if (result + c > 98)
+
+	for (int k = 0; k < key; k++)
+	{
+		for (int g = 0; g < key; g++)
 		{
-			result += d;
-		}
-		if (result + d > 98)
-		{
-			result += e;
+			printf("%c", arr[g][k]);
 		}
 	}
-	printf("%i", result);
+ }
+
+void DeCipher(char str[SZ], char arr[SZ][SZ] , int key)
+{
+
+		for (int g = 0; g < key; g++)
+		{
+			char tmp = arr[0 + 1][g];
+			arr[0 + 1][g] = arr[0][g];
+			arr[0][g] = tmp;
+		}
+
+		if (key >= 4)
+		{
+			for (int g = 0; g < key; g++)
+			{
+				char tmp = arr[2 + 1][g];
+				arr[2 + 1][g] = arr[2][g];
+				arr[2][g] = tmp;
+			}
+		}
+
+	for (int k = 0; k < key; k++)
+	{
+		for (int g = 0; g < key; g++)
+		{
+			printf("%c", arr[k][g]);
+		}
+	}
 }
 
 void main()
 {
-	char str[SZ] = {0};
-	printf("%s", "Enter string :");
-	scanf("%s", &str);
-	hashF(str);
-	sumAlgo();
+	char str[SZ] = { 0 };
+	char arr[SZ][SZ] = { 0 };
+	printf("Enter message uppercase :");
+	fgets(str, SZ, stdin);
+	CaesarCipher(str, 1);
+	printf("\n");
+	CaesarDecipher(str, 1);
+	printf("\n");
+	Cipher(str, arr ,6);
+	printf("\n");
+	DeCipher(str, arr, 6);
 }
